@@ -8,7 +8,7 @@ from PIL import Image
 from sentence_transformers import SentenceTransformer
 
 model = SentenceTransformer('clip-ViT-B-32', cache_folder='./model_cache')
-s3 = boto3.client('s3')
+s3 = boto3.client('s3', region_name='ap-northeast-2')
 SPRING_SERVER_URL = os.environ.get('SPRING_SERVER_URL')
 
 
@@ -19,6 +19,7 @@ def handler(event, context):
         key = unquote_plus(raw_key)
 
         try:
+            print(f"▶▶▶ [DEBUG] Bucket: {bucket_name} / Key: {key}")
             # 1. S3에서 이미지 가져오기
             file_obj = s3.get_object(Bucket=bucket_name, Key=key)
             img = Image.open(BytesIO(file_obj['Body'].read()))
